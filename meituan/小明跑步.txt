@@ -1,0 +1,61 @@
+//美团小明跑步
+//3 3 1 节点， 边， 起点
+//1 2 2 2个节点，距离
+//2 3 3
+//1 3 4
+//4 跑的距离
+#include <iostream>
+#include <vector>
+using namespace std;
+struct Node {
+	int index;
+	vector<Node*> neighbors;
+	vector<int> edge;
+	Node(int x) {
+		index = x;
+	}
+};
+
+void DFS(Node* &node, int &result, int &distance, int &std_distance, Node* father) {
+	if (distance >= std_distance) {
+		result += 1;
+		return;
+	}
+	if (distance < std_distance && node->neighbors.size() == 0) {
+		return;
+	}
+	for (int i = 0; i < node->neighbors.size(); i++) {
+		if (node->neighbors[i] != father) {
+			distance = distance + node->edge[i];
+			DFS(node->neighbors[i], result, distance, std_distance,node);
+			distance = distance - node->edge[i];
+		}
+
+	}
+}
+
+int main() {
+	int n, m, s;
+	while (cin >> n >> m >> s) {
+		vector<Node*> Node_vec;
+		for (int i = 0; i < n; i++) {
+			Node Node_temp(i);
+			Node_vec.push_back(&Node_temp);
+		}
+		for (int i = 0; i < m; i++) {
+			int u, v, w;
+			cin >> u >> v >> w;
+			Node_vec[u - 1]->neighbors.push_back(Node_vec[v - 1]);
+			Node_vec[v - 1]->neighbors.push_back(Node_vec[u - 1]);
+			Node_vec[u - 1]->edge.push_back(w);
+			Node_vec[v - 1]->edge.push_back(w);
+		}
+		int std_distance;
+		cin >> std_distance;
+		Node* start = Node_vec[s];
+		int result = 0;
+		int distance = 0;
+		DFS(start, result, distance, std_distance,NULL);
+		cout << result << endl;
+	}
+}
