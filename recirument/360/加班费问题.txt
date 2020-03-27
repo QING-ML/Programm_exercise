@@ -1,0 +1,70 @@
+//计算加班费的期望， 如果连续加班每天的加班费都比前一天加1
+//输入加班天数n
+//输入整数序列，序列中1为加班，0为不加班， 2为50%可能性加班，50%不加班
+//求最终这段时间加班费的期望值Expected value
+#include<iostream>
+#include<vector>
+
+using namespace std;
+void compute_expect(vector<double> &result_vec, vector<int> &decision, int result,
+	double probability, int c_index, int deep, int Reward) {
+	if (c_index == deep - 1) {
+		if (decision[c_index] == 1) {
+			result_vec.push_back((result + Reward + 1) * probability);
+		}
+		else if (decision[c_index] == 0) {
+			result_vec.push_back((result)* probability);
+		}
+		else if (decision[c_index] == 2) {
+			result_vec.push_back((result)* probability * 0.5);
+			result_vec.push_back((result + Reward + 1) * probability * 0.5);
+		}
+		return;
+	}
+	//previous phase
+	if (decision[c_index] == 0) {
+		Reward = 0;
+		result = result + 0;
+		compute_expect(result_vec, decision, result, probability, c_index + 1, deep, Reward);
+	}
+	else if (decision[c_index] == 1) {
+		Reward = Reward + 1;
+		result = result + Reward;
+		compute_expect(result_vec, decision, result, probability, c_index + 1, deep, Reward);
+	}
+	else if (decision[c_index] == 2) {
+		Reward = Reward + 1;
+		result = result + Reward;
+		compute_expect(result_vec, decision, result, probability * 0.5, c_index + 1, deep, Reward);
+
+		result = result - Reward;
+		Reward = 0;
+		compute_expect(result_vec, decision, result, probability * 0.5, c_index + 1, deep, Reward);
+	}
+
+
+}
+
+int main() {
+	int n_day;
+	while (cin >> n_day) {
+		vector<int> decision;
+		for (int i = 0; i < n_day; i++) {
+			int temp;
+			cin >> temp;
+			decision.push_back(temp);
+		}
+		vector<double> result_vec;
+		int result = 0;
+		int Reward = 0;
+		double probability = 1.0;
+		int c_index = 0;
+		int deep = decision.size();
+		compute_expect(result_vec, decision, result, probability, c_index, deep, Reward);
+		double output = 0.0;
+		for (int i = 0; i < result_vec.size(); i++) {
+			output = output + result_vec[i];
+		}
+		cout << output << endl;
+	}
+}
