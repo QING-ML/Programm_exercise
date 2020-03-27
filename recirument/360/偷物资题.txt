@@ -1,0 +1,30 @@
+//一堆物资，每个物资体积为1， 均可堆成R*L*C的长方体,一小偷偷窃物资，偷完后把物资堆成（R-2）)(c-1)(B-2)
+//输入偷窃完后的体积
+//求小偷最多偷走多少物资
+#include<iostream>
+#include<vector>
+
+using namespace std;
+int main() {
+	int volume;
+	while (cin >> volume) {
+		//vector<vector<int>> result_vec(volume, vector<int>(volume,0));
+		int result = 0;
+		for (int i = 0; i < volume; i++) {
+			for (int j = 0; j < volume; j++) {
+				int a = j + 1;
+				int b = i + 1;
+				if (a*b > volume) {
+					break;
+				}
+				if (volume % (a * b) == 0) {
+					int temp = (a + 2) * (volume / (a*b) + 1) *(b + 2) - volume;
+					if (temp > result) {
+						result = temp;
+					}
+				}
+			}
+		}
+		cout << result << endl;
+	}
+}
